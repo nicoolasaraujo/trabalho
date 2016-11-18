@@ -1,0 +1,65 @@
+produto(001,'Achocolatado','Nescau',50,'Alimenticio',4.00).
+produto(002,'Achocolatado','Toddy',30,'Alimenticio',3.00).
+produto(003,'Arroz','Vasconcelos',20,'Alimenticio',8.00).
+produto(004,'Feijão','cocal',30,'Alimenticio',9.00).
+produto(005,'Açucar','Camil',20,'Alimenticio',6.00).
+produto(006,'Refrigerante','Coca Cola',50,'Alimenticio',6.5).
+produto(007,'Refrigerante','Kuat',30,'Alimenticio',6.00).
+produto(008,'Suco','Fresh',200,'Alimenticio',0.8).
+produto(009,'Suco','Del Valle',40,'Alimenticio',6.00).
+produto(010,'Bolacha','Nikito',30,'Alimenticio',2.00).
+produto(011,'Bolacha','Negresco',20,'Alimenticio',3.00).
+
+venda(001,'Achocolatado','Nescau',40,'Alimenticio',6.00).
+venda(002,'Achocolatado','Toddy',27,'Alimenticio',5.00).
+venda(003,'Arroz','Vasconcelos',15,'Alimenticio',12.00).
+venda(004,'Feijão','cocal',27,'Alimenticio',15.00).
+venda(005,'Açucar','Camil',19,'Alimenticio',8.00).
+venda(006,'Refrigerante','Coca Cola',49,'Alimenticio',8.00).
+venda(007,'Refrigerante','Kuat',25,'Alimenticio',9.00).
+venda(008,'Suco','Fresh',180,'Alimenticio',1.00).
+venda(009,'Suco','Del Valle',37,'Alimenticio',6.00).
+venda(010,'Bolacha','Nikito',30,'Alimenticio',3.00).
+venda(011,'Bolacha','Negresco',19,'Alimenticio',4.00).
+
+/*mostra o estoque atual produto-venda*/
+saldo(X,R,Y):- produto(_,R,X,R1,_,_),venda(_,R,X,R2,_,_), Y is R1-R2.
+definep(P,V,Z):- Z is (100*V)/P.
+porcentagem_boa(X,R,Y):- produto(_,R,X,R1,_,_),venda(_,R,X,R2,_,_), definep(R1,R2,Y).
+
+/*se a diferença produto-venda for menor que 10% ele mostra*/
+alerta_estoq(R1,R2):- R2=<(R1*10)/100.
+saldo_critc(X,R,Y):- saldo(X,R,Y),
+                     produto(_,R,X,R1,_,_),
+                     alerta_estoq(R1,Y).
+
+/*calcula a qtd de produto*/
+qtdxp(X,Y,Z):- Z is X*Y.
+bens_estoque(001,X):- produto(001,_,_,U,_,P),
+                      qtdxp(U,P,X).
+bens_estoque(X,R):- X>1,
+                    produto(X,_,_,U,_,P),
+                    qtdxp(U,P,R1),
+                    X1 is X-1,
+                    bens_estoque(X1,R2),
+                    R is R1 + R2.
+
+/*produtos vendidos*/
+vendas(001,X):- venda(001,_,_,U,_,P), qtdxp(U,P,X).
+vendas(X,R):- X>1,
+              venda(X,_,_,U,_,P),
+              qtdxp(U,P,R1),
+              X1 is X-1,
+              vendas(X1,R2),
+              R is R1 + R2.
+
+/*diferença depois das vendas*/
+diferenca(X,R):- vendas(X,R1),
+                 bens_estoque(X,R2),
+                 R is R2-R1.
+
+/*local*/
+locall(X):- X=<2, write('A1');
+            X>2, X<6, write('A2');
+            X>5 , X<10, write('A3');
+            X>9 ,write('A4').

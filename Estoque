@@ -1,3 +1,4 @@
+/*produtos ja em estoque (estoque mensal)*/
 produto(001,'Achocolatado','Nescau',50,'Alimenticio',4.00).
 produto(002,'Achocolatado','Toddy',30,'Alimenticio',3.00).
 produto(003,'Arroz','Vasconcelos',20,'Alimenticio',8.00).
@@ -5,11 +6,30 @@ produto(004,'Feijão','cocal',30,'Alimenticio',9.00).
 produto(005,'Açucar','Camil',20,'Alimenticio',6.00).
 produto(006,'Refrigerante','Coca Cola',50,'Alimenticio',6.5).
 produto(007,'Refrigerante','Kuat',30,'Alimenticio',6.00).
-produto(008,'Suco','Fresh',200,'Alimenticio',0.8).
+produto(008,'Suco','Fresh',200,'Alimenticio',0.5).
 produto(009,'Suco','Del Valle',40,'Alimenticio',6.00).
 produto(010,'Bolacha','Nikito',30,'Alimenticio',2.00).
 produto(011,'Bolacha','Negresco',20,'Alimenticio',3.00).
+produto(012,'Bolacha','Passatempo',30,'Alimenticio',2.0).
+produto(013,'Desinfetante','Pinho',30,'Limpeza',7.28).
+produto(014,'Desinfetante','Pato',35,'Limpeza',6.98).
+produto(015,'Desinfetante','Sanol',35,'Limpeza',7.20).
+produto(016,'Plaha de Aço','BomBril',50,'Limpeza',3.90).
+produto(017,'Plaha de Aço','Ype',50,'Limpeza',3.78).
+produto(018,'Plaha de Aço','Assolan',50,'Limpeza',4.08).
+produto(019,'Esponja','ScotchBrite',45,'Limpeza',4.50).
+produto(020,'Esponja','BomBril',45,'Limpeza',4.30).
+produto(021,'Amaciante','Comfort',50,'Limpeza',6.90).
+produto(022,'Amaciante','BomBril',45,'Limpeza',5.99).
+produto(023,'Amaciante','Fofo',45,'Limpeza',7.29).
+produto(024,'Amaciante','Soft',45,'Limpeza',6.99).
+produto(025,'Amaciante','Tuff',50,'Limpeza',7.10).
+produto(026,'Sabao em Po','Omo',60,'Limpeza',5.99).
+produto(027,'Sabao em Po','Tixan Ype',32,'Limpeza',5.89).
+produto(028,'Sabao em Po','Brihante',20,'Limpeza',6.18).
+produto(029,'Sabao em Po','Ace',30,'Limpeza',5.50).
 
+/*produtos vendidos no mes*/
 venda(001,'Achocolatado','Nescau',40,'Alimenticio',6.00).
 venda(002,'Achocolatado','Toddy',27,'Alimenticio',5.00).
 venda(003,'Arroz','Vasconcelos',15,'Alimenticio',12.00).
@@ -21,6 +41,25 @@ venda(008,'Suco','Fresh',180,'Alimenticio',1.00).
 venda(009,'Suco','Del Valle',37,'Alimenticio',6.00).
 venda(010,'Bolacha','Nikito',30,'Alimenticio',3.00).
 venda(011,'Bolacha','Negresco',19,'Alimenticio',4.00).
+venda(012,'Bolacha','Passatempo',30,'Alimenticio',3.0).
+venda(013,'Desinfetante','Pinho',27,'Limpeza',8.28).
+venda(014,'Desinfetante','Pato',33,'Limpeza',7.98).
+venda(015,'Desinfetante','Sanol',25,'Limpeza',8.20).
+venda(016,'Plaha de Aço','BomBril',50,'Limpeza',3.90).
+venda(017,'Plaha de Aço','Ype',30,'Limpeza',5.78).
+venda(018,'Plaha de Aço','Assolan',46,'Limpeza',5.08).
+venda(019,'Esponja','ScotchBrite',40,'Limpeza',6.50).
+venda(020,'Esponja','BomBril',35,'Limpeza',5.30).
+venda(021,'Amaciante','Comfort',30,'Limpeza',8.90).
+venda(022,'Amaciante','BomBril',10,'Limpeza',7.99).
+venda(023,'Amaciante','Fofo',30,'Limpeza',6.29).
+venda(024,'Amaciante','Soft',25,'Limpeza',7.99).
+venda(025,'Amaciante','Tuff',47,'Limpeza',9.10).
+venda(026,'Sabao em Po','Omo',50,'Limpeza',6.99).
+venda(027,'Sabao em Po','Tixan Ype',28,'Limpeza',7.89).
+venda(028,'Sabao em Po','Brihante',19,'Limpeza',8.18).
+venda(029,'Sabao em Po','Ace',21,'Limpeza',6.50).
+
 
 /*mostra o estoque atual produto-venda*/
 saldo(X,R,Y):- produto(_,R,X,R1,_,_),venda(_,R,X,R2,_,_), Y is R1-R2.
@@ -33,16 +72,16 @@ saldo_critc(X,R,Y):- saldo(X,R,Y),
                      produto(_,R,X,R1,_,_),
                      alerta_estoq(R1,Y).
 
-/*calcula a qtd de produto*/
+ /*calcula a qtd de produto*/
 qtdxp(X,Y,Z):- Z is X*Y.
 bens_estoque(001,X):- produto(001,_,_,U,_,P),
-                      qtdxp(U,P,X).
+                     qtdxp(U,P,X).
 bens_estoque(X,R):- X>1,
                     produto(X,_,_,U,_,P),
                     qtdxp(U,P,R1),
                     X1 is X-1,
                     bens_estoque(X1,R2),
-                    R is R1 + R2.
+                    R is R1 + R2,!.
 
 /*produtos vendidos*/
 vendas(001,X):- venda(001,_,_,U,_,P), qtdxp(U,P,X).
@@ -51,15 +90,27 @@ vendas(X,R):- X>1,
               qtdxp(U,P,R1),
               X1 is X-1,
               vendas(X1,R2),
-              R is R1 + R2.
+              R is R1 + R2,!.
 
 /*diferença depois das vendas*/
 diferenca(X,R):- vendas(X,R1),
                  bens_estoque(X,R2),
-                 R is R2-R1.
+                 R is R2-R1,!.
 
-/*local*/
-locall(X):- X=<2, write('A1');
-            X>2, X<6, write('A2');
-            X>5 , X<10, write('A3');
-            X>9 ,write('A4').
+/*local com poda */
+f(X,'A1'):- X=<2,!.
+f(X,'A2'):- X>2,X<6,!.
+f(X,'A3'):- X>5, X<10,!.
+f(X,'A4'):- X>=10, X<13, !.
+f(X,'B1'):- X>=13, X=<15,!.
+f(X,'B2'):- X>15, X=<18,!.
+f(X,'B3'):- X>18, X=<20,!.
+f(X,'B4'):- X>20, X=<25,!.
+f(_,'B5').
+
+locall(NOME,COD,RETORNO,TIPO):- produto(COD,TIPO,NOME,_,_,_),
+                f(COD,RETORNO).
+
+
+
+

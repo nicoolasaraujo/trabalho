@@ -1,8 +1,8 @@
 /*produtos ja em estoque (estoque mensal)*/
 produto(001,'Achocolatado','Nescau',50,'Alimenticio',4.00).
 produto(002,'Achocolatado','Toddy',30,'Alimenticio',3.00).
-produto(003,'Arroz','Vasconcelos',20,'Alimenticio',8.00).
-produto(004,'Feijão','cocal',30,'Alimenticio',9.00).
+produto(003,'Arroz','Vasconcelos',20,'Alimenticio',5.00).
+produto(004,'Feijão','cocal',30,'Alimenticio',6.00).
 produto(005,'Açucar','Camil',20,'Alimenticio',6.00).
 produto(006,'Refrigerante','Coca Cola',50,'Alimenticio',6.5).
 produto(007,'Refrigerante','Kuat',30,'Alimenticio',6.00).
@@ -11,9 +11,9 @@ produto(009,'Suco','Del Valle',40,'Alimenticio',6.00).
 produto(010,'Bolacha','Nikito',30,'Alimenticio',2.00).
 produto(011,'Bolacha','Negresco',20,'Alimenticio',3.00).
 produto(012,'Bolacha','Passatempo',30,'Alimenticio',2.0).
-produto(013,'Desinfetante','Pinho',30,'Limpeza',7.28).
+produto(013,'Desinfetante','Pinho',30,'Limpeza',5.28).
 produto(014,'Desinfetante','Pato',35,'Limpeza',6.98).
-produto(015,'Desinfetante','Sanol',35,'Limpeza',7.20).
+produto(015,'Desinfetante','Sanol',35,'Limpeza',6.20).
 produto(016,'Plaha de Aço','BomBril',50,'Limpeza',3.90).
 produto(017,'Plaha de Aço','Ype',50,'Limpeza',3.78).
 produto(018,'Plaha de Aço','Assolan',50,'Limpeza',4.08).
@@ -21,9 +21,9 @@ produto(019,'Esponja','ScotchBrite',45,'Limpeza',4.50).
 produto(020,'Esponja','BomBril',45,'Limpeza',4.30).
 produto(021,'Amaciante','Comfort',50,'Limpeza',6.90).
 produto(022,'Amaciante','BomBril',45,'Limpeza',5.99).
-produto(023,'Amaciante','Fofo',45,'Limpeza',7.29).
-produto(024,'Amaciante','Soft',45,'Limpeza',6.99).
-produto(025,'Amaciante','Tuff',50,'Limpeza',7.10).
+produto(023,'Amaciante','Fofo',45,'Limpeza',6.29).
+produto(024,'Amaciante','Soft',45,'Limpeza',5.99).
+produto(025,'Amaciante','Tuff',50,'Limpeza',5.10).
 produto(026,'Sabao em Po','Omo',60,'Limpeza',5.99).
 produto(027,'Sabao em Po','Tixan Ype',32,'Limpeza',5.89).
 produto(028,'Sabao em Po','Brihante',20,'Limpeza',6.18).
@@ -47,7 +47,7 @@ venda(014,'Desinfetante','Pato',33,'Limpeza',7.98).
 venda(015,'Desinfetante','Sanol',25,'Limpeza',8.20).
 venda(016,'Plaha de Aço','BomBril',40,'Limpeza',3.90).
 venda(017,'Plaha de Aço','Ype',30,'Limpeza',5.78).
-venda(018,'Plaha de Aço','Assolan',46,'Limpeza',5.08).
+venda(018,'Plaha de Aço','Assolan',49,'Limpeza',5.08).
 venda(019,'Esponja','ScotchBrite',40,'Limpeza',6.50).
 venda(020,'Esponja','BomBril',35,'Limpeza',5.30).
 venda(021,'Amaciante','Comfort',30,'Limpeza',8.90).
@@ -95,7 +95,7 @@ vendas(X,R):- X>1,
 /*diferença depois das vendas*/
 diferenca(X,R):- vendas(X,R1),
                  bens_estoque(X,R2),
-                 R is R2-R1,!.
+                 R is R1-R2,!.
 
 /*local com poda */
 f(X,'A1'):- X=<2,!.
@@ -111,26 +111,65 @@ f(_,'B5').
 locall(NOME,COD,RETORNO,TIPO):- produto(COD,TIPO,NOME,_,_,_),
                 f(COD,RETORNO).
 
+/*defina como buscar*/
+escolha(X):- X=:= 1,
+             write('Produto: '),
+             read(NOME),write('MARCA: '),read(MARCA),
+             pesquisar_prod(NOME,MARCA).
+escolha(X):- X=:= 2,
+             listar(1).
+escolha(_):- write('ERROR :/'),nl.
+
+/*mini interface para os tipos de busca*/
+pesquisar():- write('Buscar um produto especifico ou listar produtos(1/2)?:'),nl,
+              read(X),
+              escolha(X).
+
+
+
 /*pesquisa informações pertinentes sobre um produto*/
-pesquisar_prod(NOME,MARCA):- produto(COD,NOME,MARCA,UNI,CAT,PRE),
+pesquisar_prod(NOME,MARCA):- produto(COD,NOME,MARCA,UNI,CAT,_),
                              locall(MARCA,COD,R,NOME),
                              saldo(MARCA,NOME,Y),
+                             venda(_,NOME,MARCA,_,_,PRE),
+                             write('PRODUTO: '),write(NOME),nl,
+                             write('MARCA: '),write(MARCA),nl,
                              write('CODIGO: '),write(COD),nl,
-                             write('UNIDADES-PREVENDA: '), write(UNI),nl,
-                             write('UNIDADES-POSVENDA: '), write(Y),nl,
+                             write('UNIDADES-INCIAL: '), write(UNI),nl,
+                             write('UNIDADES-ATUAL: '), write(Y),nl,
                              write('CATEGORIA: '), write(CAT),nl,
                              write('PRECO: '), write(PRE),nl,
-                             write('LOCAL: '), write(R),nl,!.
+                             write('LOCAL: '), write(R),nl,nl,!.
 
 pesquisar_prod(_,_):- write('NAO EXISTE'),nl.
 
+/*lista todos os produtos*/
+listar(029):- produto(029,NOME,MARCA,_,_,_),
+                pesquisar_prod(NOME,MARCA).
+listar(X):- X<29,produto(X,NOME,MARCA,_,_,_),
+              pesquisar_prod(NOME,MARCA),
+              X1 is X+1,
+              listar(X1).
 
 
+
+
+/*função para definir qual o maior valor entre duas entradas*/
 maior(X,Y,X):- X>Y,!.
 maior(_,Y,Y).
 /*encontra o maior valor de acordo com a base de fatos*/
-maior_valor(001,Y):- produto(001,R,_,R1,_,_),venda(001,R,_,R2,_,_), definep(R1,R2,Y).
-maior_valor(X,Y):- X>1,produto(X,R,_,R1,_,_),venda(X,R,_,R2,_,_), definep(R1,R2,Y1), X1 is X-1, maior_valor(X1,Y2),maior(Y1,Y2,Y),!.
+maior_valor(001,Y):- produto(001,R,_,R1,_,_),
+                     venda(001,R,_,R2,_,_),
+                     definep(R1,R2,Y).
+
+maior_valor(X,Y):- X>1,
+                   produto(X,R,_,R1,_,_),
+                   venda(X,R,_,R2,_,_),
+                   definep(R1,R2,Y1),
+                   X1 is X-1,
+                   maior_valor(X1,Y2),
+                   maior(Y1,Y2,Y),!.
 
 /*encontra a mercadoria que teve maior indice de venda*/
-top_vendas(X,Y,N,M):- maior_valor(X,Y), porcentagem_boa(N,M,Y).
+top_vendas(X,Y,N,M):- maior_valor(X,Y),
+                      porcentagem_boa(N,M,Y).

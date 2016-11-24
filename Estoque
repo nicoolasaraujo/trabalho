@@ -64,7 +64,7 @@ venda(029,'Sabao em Po','Ace',21,'Limpeza',6.50).
 /*mostra o estoque atual produto-venda*/
 saldo(X,R,Y):- produto(_,R,X,R1,_,_),venda(_,R,X,R2,_,_), Y is R1-R2.
 definep(P,V,Z):- Z is (100*V)/P.
-porcentagem_boa(X,R,Y):- produto(_,R,X,R1,_,_),venda(_,R,X,R2,_,_), definep(R1,R2,Y).
+porcentagem(X,R,Y):- produto(_,R,X,R1,_,_),venda(_,R,X,R2,_,_), definep(R1,R2,Y).
 
 /*se a diferença produto-venda for menor que 10% ele mostra*/
 alerta_estoq(R1,R2):- R2=<(R1*10)/100.
@@ -108,8 +108,8 @@ f(X,'B3'):- X>18, X=<20,!.
 f(X,'B4'):- X>20, X=<25,!.
 f(_,'B5').
 
-locall(NOME,COD,RETORNO,TIPO):- produto(COD,TIPO,NOME,_,_,_),
-                f(COD,RETORNO).
+locall(MARCA,COD,RETORNO,PRODUTO):- produto(COD,PRODUTO,MARCA,_,_,_),
+                f(COD,RETORNO),!.
 
 /*defina como buscar*/
 escolha(X):- X=:= 1,
@@ -152,8 +152,6 @@ listar(X):- X<29,produto(X,NOME,MARCA,_,_,_),
               listar(X1).
 
 
-
-
 /*função para definir qual o maior valor entre duas entradas*/
 maior(X,Y,X):- X>Y,!.
 maior(_,Y,Y).
@@ -161,7 +159,6 @@ maior(_,Y,Y).
 maior_valor(001,Y):- produto(001,R,_,R1,_,_),
                      venda(001,R,_,R2,_,_),
                      definep(R1,R2,Y).
-
 maior_valor(X,Y):- X>1,
                    produto(X,R,_,R1,_,_),
                    venda(X,R,_,R2,_,_),
@@ -172,4 +169,4 @@ maior_valor(X,Y):- X>1,
 
 /*encontra a mercadoria que teve maior indice de venda*/
 top_vendas(X,Y,N,M):- maior_valor(X,Y),
-                      porcentagem_boa(N,M,Y).
+                      porcentagem(N,M,Y).

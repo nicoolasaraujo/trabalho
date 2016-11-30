@@ -61,6 +61,10 @@ venda(028,'Sabao em Po','Brihante',19,'Limpeza',8.18).
 venda(029,'Sabao em Po','Ace',21,'Limpeza',6.50).
 
 
+
+help():- write('saldo(Marca,Produto,Retorno)\nporcentagem(Marca,Produto,Retorno)\nbens_estoque(29,Total)\nvendas(29,Total)\ndiferenca(29,Total)\nlocall(Marca,Codigo,Retorno,Produto)\npesquisar_prod(Produto,Marca)\nlistar(1)\nmaior_valor(29,Porcentagem)\ntop_vendas(29,Porcentagem,Produto,Marca)').
+
+
 /*mostra o estoque atual produto-venda*/
 saldo(X,R,Y):- produto(_,R,X,R1,_,_),venda(_,R,X,R2,_,_), Y is R1-R2.
 definep(P,V,Z):- Z is (100*V)/P.
@@ -149,7 +153,7 @@ listar(029):- produto(029,NOME,MARCA,_,_,_),
 listar(X):- X<29,produto(X,NOME,MARCA,_,_,_),
               pesquisar_prod(NOME,MARCA),
               X1 is X+1,
-              listar(X1).
+              listar(X1),!.
 
 
 /*função para definir qual o maior valor entre duas entradas*/

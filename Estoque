@@ -115,19 +115,7 @@ f(_,'B5').
 locall(MARCA,COD,RETORNO,PRODUTO):- produto(COD,PRODUTO,MARCA,_,_,_),
                 f(COD,RETORNO),!.
 
-/*defina como buscar*/
-escolha(X):- X=:= 1,
-             write('Produto: '),
-             read(NOME),write('MARCA: '),read(MARCA),
-             pesquisar_prod(NOME,MARCA).
-escolha(X):- X=:= 2,
-             listar(1).
-escolha(_):- write('ERROR :/'),nl.
 
-/*mini interface para os tipos de busca*/
-pesquisar():- write('Buscar um produto especifico ou listar produtos(1/2)?:'),nl,
-              read(X),
-              escolha(X).
 
 
 
